@@ -3,7 +3,7 @@ package com.zooplus.cryptomonitor.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Currency {
+public class CryptoCurrency {
     private String id;
     private String symbol;
     private String name;
