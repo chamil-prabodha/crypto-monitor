@@ -8,9 +8,7 @@ public class DetailedCryptoCurrency extends CryptoCurrency {
     private String currencyName;
 
     public DetailedCryptoCurrency(CryptoCurrency cryptoCurrency) {
-        this.setId(cryptoCurrency.getId());
-        this.setSymbol(cryptoCurrency.getSymbol());
-        this.setName(cryptoCurrency.getName());
+        super(cryptoCurrency.getId(), cryptoCurrency.getSymbol(), cryptoCurrency.getName());
     }
 
     public BigDecimal getPrice() {

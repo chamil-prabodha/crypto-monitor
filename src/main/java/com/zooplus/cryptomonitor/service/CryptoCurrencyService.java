@@ -2,6 +2,7 @@ package com.zooplus.cryptomonitor.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.zooplus.cryptomonitor.model.CryptoCurrency;
+import com.zooplus.cryptomonitor.model.DetailedCryptoCurrency;
 import com.zooplus.cryptomonitor.util.CryptoResponseTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
@@ -55,12 +56,13 @@ public class CryptoCurrencyService implements CurrencyService<CryptoCurrency> {
             URIBuilder builder = new URIBuilder(baseUrl.toString()).setPath(priceEndpoint)
                     .addParameter("ids", cryptoCurrency.getId())
                     .addParameter("vs_currencies", vsCurrency);
+            log.debug("attempting to make request: {}", builder.toString());
             ResponseEntity<JsonNode> response = restTemplate.exchange(builder.toString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
             log.info("successfully fetched price of currency {} in {}", cryptoCurrency, vsCurrency);
             return CryptoResponseTransformer.getDetailedCryptoCurrency(cryptoCurrency, vsCurrency, response.getBody());
         } catch (Exception e) {
             log.error("an exception occurred while fetching the price of currency {} in {}", cryptoCurrency, vsCurrency, e);
         }
-        return null;
+        return new DetailedCryptoCurrency(cryptoCurrency);
     }
 }

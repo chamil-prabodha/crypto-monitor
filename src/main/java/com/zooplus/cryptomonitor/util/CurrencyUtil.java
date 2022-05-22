@@ -8,7 +8,11 @@ public class CurrencyUtil {
     public static Currency getCurrency(String id) {
         Currency currency = null;
         if (id != null) {
-            currency = Currency.getInstance(id.toUpperCase());
+            try {
+                currency = Currency.getInstance(id.toUpperCase());
+            } catch (Exception ignored) {
+
+            }
         }
         if (currency != null) {
             return currency;

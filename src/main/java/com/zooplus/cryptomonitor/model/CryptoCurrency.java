@@ -8,6 +8,12 @@ public class CryptoCurrency {
     private String symbol;
     private String name;
 
+    public CryptoCurrency(String id, String symbol, String name) {
+        this.id = id;
+        this.symbol = symbol;
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }
@@ -34,7 +40,7 @@ public class CryptoCurrency {
 
     @Override
     public String toString() {
-        return "Currency{" +
+        return "CryptoCurrency{" +
                 "id='" + id + '\'' +
                 ", symbol='" + symbol + '\'' +
                 ", name='" + name + '\'' +
