@@ -1,7 +1,9 @@
 package com.zooplus.cryptomonitor.controller;
 
+import com.zooplus.cryptomonitor.exception.RestAPIException;
 import com.zooplus.cryptomonitor.model.CryptoCurrency;
 import com.zooplus.cryptomonitor.model.IpInfo;
+import com.zooplus.cryptomonitor.model.response.APIResponse;
 import com.zooplus.cryptomonitor.service.CurrencyService;
 import com.zooplus.cryptomonitor.service.IpInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +26,18 @@ public class CryptoController {
     }
 
     @GetMapping("/currency/list")
-    public ResponseEntity<List<CryptoCurrency>> getCoins() {
+    public ResponseEntity<APIResponse<List<CryptoCurrency>>> getCoins() throws RestAPIException {
         List<CryptoCurrency> cryptoCurrencyList = cryptoCurrencyService.getCurrencyList();
-        return new ResponseEntity<>(cryptoCurrencyList, HttpStatus.OK);
+        APIResponse<List<CryptoCurrency>> apiResponse = new APIResponse<>(true, cryptoCurrencyList);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("/price/{id}")
-    public ResponseEntity<CryptoCurrency> getPrice(@PathVariable String id, @RequestParam String ip) {
+    public ResponseEntity<APIResponse<CryptoCurrency>> getPrice(@PathVariable String id, @RequestParam String ip) throws RestAPIException {
         IpInfo ipInfo = ipInfoService.getInfo(ip);
         CryptoCurrency cryptoCurrency = new CryptoCurrency(id, null, null);
-        CryptoCurrency response = cryptoCurrencyService.getPrice(cryptoCurrency, ipInfo.getCurrency().toLowerCase());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        CryptoCurrency detailedCryptoCurrency = cryptoCurrencyService.getPrice(cryptoCurrency, ipInfo.getCurrency().toLowerCase());
+        APIResponse<CryptoCurrency> apiResponse = new APIResponse<>(true, detailedCryptoCurrency);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }

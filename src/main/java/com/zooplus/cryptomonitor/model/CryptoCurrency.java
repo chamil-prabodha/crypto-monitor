@@ -8,6 +8,8 @@ public class CryptoCurrency {
     private String symbol;
     private String name;
 
+    public CryptoCurrency() {}
+
     public CryptoCurrency(String id, String symbol, String name) {
         this.id = id;
         this.symbol = symbol;

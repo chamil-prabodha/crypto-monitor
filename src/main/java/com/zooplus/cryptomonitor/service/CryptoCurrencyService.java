@@ -1,6 +1,7 @@
 package com.zooplus.cryptomonitor.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.zooplus.cryptomonitor.exception.CryptoAPIException;
 import com.zooplus.cryptomonitor.model.CryptoCurrency;
 import com.zooplus.cryptomonitor.model.DetailedCryptoCurrency;
 import com.zooplus.cryptomonitor.util.CryptoResponseTransformer;
@@ -10,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.MalformedURLException;
@@ -36,22 +40,26 @@ public class CryptoCurrencyService implements CurrencyService<CryptoCurrency> {
         this.baseUrl = new URL(basePath);
     }
 
-    public  List<CryptoCurrency> getCurrencyList() {
-        List<CryptoCurrency> cryptoCurrencyList = new ArrayList<>();
+    public  List<CryptoCurrency> getCurrencyList() throws CryptoAPIException {
+        List<CryptoCurrency> cryptoCurrencyList;
         try {
             URL url = new URL(baseUrl, coinsEndpoint);
             ResponseEntity<List<CryptoCurrency>> currencyListResponse = restTemplate.exchange(url.toString(), HttpMethod.GET, null, new ParameterizedTypeReference<>() {
             });
             cryptoCurrencyList = CryptoResponseTransformer.getOrDefault(currencyListResponse.getBody(), new ArrayList<>());
             log.info("successfully fetched currency list with {} currencies", cryptoCurrencyList.size());
+            return cryptoCurrencyList;
         } catch (Exception e) {
+            if (e instanceof HttpClientErrorException) {
+                log.error("received error response: {}", ((HttpClientErrorException) e).getResponseBodyAsString());
+            }
             log.error("an exception occurred while fetching currency list", e);
+            throw new CryptoAPIException("Crypto Currency API for listing currencies is not available", HttpStatus.BAD_REQUEST, e.getMessage(), new ArrayList<>());
         }
-        return cryptoCurrencyList;
     }
 
     @Override
-    public CryptoCurrency getPrice(CryptoCurrency cryptoCurrency, String vsCurrency) {
+    public CryptoCurrency getPrice(CryptoCurrency cryptoCurrency, String vsCurrency) throws CryptoAPIException {
         try {
             URIBuilder builder = new URIBuilder(baseUrl.toString()).setPath(priceEndpoint)
                     .addParameter("ids", cryptoCurrency.getId())
@@ -61,8 +69,11 @@ public class CryptoCurrencyService implements CurrencyService<CryptoCurrency> {
             log.info("successfully fetched price of currency {} in {}", cryptoCurrency, vsCurrency);
             return CryptoResponseTransformer.getDetailedCryptoCurrency(cryptoCurrency, vsCurrency, response.getBody());
         } catch (Exception e) {
+            if (e instanceof HttpClientErrorException) {
+                log.error("received error response: {}", ((HttpClientErrorException) e).getResponseBodyAsString());
+            }
             log.error("an exception occurred while fetching the price of currency {} in {}", cryptoCurrency, vsCurrency, e);
+            throw new CryptoAPIException("Crypto Currency API for getting price is not available", HttpStatus.BAD_REQUEST, e.getMessage(), new DetailedCryptoCurrency(cryptoCurrency));
         }
-        return new DetailedCryptoCurrency(cryptoCurrency);
     }
 }
