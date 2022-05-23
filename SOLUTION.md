@@ -10,7 +10,7 @@ This is a RESTful api developed using Spring Boot framework to get price informa
 * User authentication
 * Endpoint for list historical price of a currency
 * CI/CD
-* Unit tests for some API and Service layer 
+* Unit tests for some API and Service layer
 
 ## API Spec
 #### GET /api/currency/list
