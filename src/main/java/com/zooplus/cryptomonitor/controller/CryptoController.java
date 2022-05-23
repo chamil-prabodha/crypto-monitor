@@ -7,6 +7,7 @@ import com.zooplus.cryptomonitor.model.response.APIResponse;
 import com.zooplus.cryptomonitor.service.CurrencyService;
 import com.zooplus.cryptomonitor.service.IpInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class CryptoController {
     private final IpInfoService<IpInfo> ipInfoService;
 
     @Autowired
-    public CryptoController(CurrencyService<CryptoCurrency> cryptoCurrencyService, IpInfoService<IpInfo> ipInfoService) {
-        this.cryptoCurrencyService = cryptoCurrencyService;
+    public CryptoController(CurrencyService<CryptoCurrency> cryptoCurrencyMarketCapService, IpInfoService<IpInfo> ipInfoService) {
+        this.cryptoCurrencyService = cryptoCurrencyMarketCapService;
         this.ipInfoService = ipInfoService;
     }
 
