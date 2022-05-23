@@ -7,6 +7,8 @@ public class IpInfo {
     private String ip;
     private String currency;
     private String currencyName;
+    private boolean error;
+    private String reason;
 
     public String getIp() {
         return ip;
@@ -32,12 +34,30 @@ public class IpInfo {
         this.currencyName = currencyName;
     }
 
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
     @Override
     public String toString() {
         return "IpInfo{" +
                 "ip='" + ip + '\'' +
                 ", currency='" + currency + '\'' +
                 ", currencyName='" + currencyName + '\'' +
+                ", error=" + error +
+                ", reason='" + reason + '\'' +
                 '}';
     }
 }
